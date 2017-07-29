@@ -132,15 +132,6 @@ else:
     string_types = str
 
 
-if is_py3:
-    def encode(text):
-        "Encodes a string as bytes."
-        return str.encode(text)
-else:
-    def encode(text):
-        "Encodes a string as bytes."
-        return str(text)
-
 
 # Correct extension ending: 'c' or 'o'
 if __debug__:
@@ -206,19 +197,6 @@ if is_py2:
     modname_tkinter = 'Tkinter'
 else:
     modname_tkinter = 'tkinter'
-
-
-if is_win:
-    try:
-        import pywintypes
-        if is_py3:
-            # pywintypes.Unicode() breaks under Python 3, just stub it out if we're running
-            # under such a Python version.
-            pywintypes.Unicode = str
-    except ImportError:
-        # Do nothing here. User should be warned when check_requirements() is
-        # called.
-        pass
 
 
 def architecture():
@@ -866,24 +844,10 @@ def check_requirements():
         raise SystemExit('PyInstaller requires at least Python 2.7 or 3.3+.')
 
     if is_win:
-        if 'win32api' in sys.modules or 'pywintypes' in sys.modules:
-            # Users should never see this error; if it occurs, it means someone
-            # wasn't careful and added an import where it shouldn't be
-            raise SystemExit("Internal error: early pywin32 import was introduced")
-        
         try:
             from PyInstaller.utils.win32 import winutils
-            try:
-                pywintypes = winutils.import_pywin32_module('pywintypes')
-            except ImportError:
-                from win32ctypes.pywin32 import pywintypes
-                from win32ctypes.pywin32 import win32api
-                
-                # if this succeeded, then install pywin32-ctypes into sys.modules
-                sys.modules['win32api'] = win32api
-                sys.modules['pywintypes'] = pywintypes
-                
+            pywintypes = winutils.import_pywin32_module('pywintypes')
         except ImportError:
             raise SystemExit('PyInstaller cannot check for assembly dependencies.\n'
-                             'Please install PyWin32 or pywin32-ctypes.\n\n'
+                             'Please install PyWin32.\n\n'
                              'pip install pypiwin32\n')

@@ -187,7 +187,6 @@ def plat_prepare(includes, packages, excludes):
             'nturl2path',
             'win32api',
             'win32con',
-            'win32ctypes',
             'win32event',
             'win32evtlogutil',
             'win32evtlog',
